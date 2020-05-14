@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/vandanayadav123/adapter-change_management#readme",
   "dependencies": {
+    "path": "^0.12.7",
     "request": "^2.88.2"
   }
 }
