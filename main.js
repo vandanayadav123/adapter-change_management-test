@@ -153,7 +153,7 @@ class ServiceNowAdapter extends EventEmitter {
     log.warn('ServiceNow: Instance is unavailable.');
   }
 
-  /**
+  /**npm run encrypt
    * @memberof ServiceNowAdapter
    * @method emitOnline
    * @summary Emit ONLINE
@@ -194,7 +194,25 @@ class ServiceNowAdapter extends EventEmitter {
      * Note how the object was instantiated in the constructor().
      * get() takes a callback function.
      */
-      this.connector.get(this.props, callback);
+       this.connector.get(this.props, (results, error) => {
+        if (results) {
+            let recordArr = JSON.parse(results.body).result;
+            let ticketArr = [];
+            recordArr.forEach((obj) => {
+                tickets.push({
+                    change_ticket_number : obj.number,
+                    change_ticket_key : obj.sys_id,
+                    active : obj.active,
+                    priority : obj.priority,
+                    description : obj.description,
+                    work_start : obj.work_start,
+                    work_end: obj.work_end
+                })
+            })
+            return callback(ticketArr, error);
+        }
+        callback(results, error);
+     })
   }
 
   /**
@@ -213,7 +231,21 @@ class ServiceNowAdapter extends EventEmitter {
      * Note how the object was instantiated in the constructor().
      * post() takes a callback function.
      */
-     this.connector.post(this.props, callback);
+     this.connector.post(this.props, (results, error) => {
+         if (results) {
+             let recordObj = JSON.parse(results.body).result;
+             return callback({
+                    change_ticket_number : recordObj.number,
+                    change_ticket_key : recordObj.sys_id,
+                    active : recordObj.active,
+                    priority : recordObj.priority,
+                    description : recordObj.description,
+                    work_start : recordObj.work_start,
+                    work_end: recordObj.work_end
+                }, error);
+        }
+        callback(results, error);
+     });
   }
 }
 
